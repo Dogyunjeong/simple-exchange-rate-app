@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { TextField, Button, Menu, MenuItem } from '../../components/MaterialUI'
+import { useAppNotificationContext } from '../../contexts/AppNotificationContext'
 import ExchangeRateTypes from '../../types/ExchangeRateTypes'
 import { internaRequest } from '../../utils/request'
 
 export interface CountrySearchProps {
-  // onAdded: () => void
+  onAdded: (country: ExchangeRateTypes.Country) => void
 }
- 
-const CountrySearch: React.FC<CountrySearchProps> = () => {
+
+const CountrySearch: React.FC<CountrySearchProps> = ({ onAdded }) => {
+  const notificationCtx = useAppNotificationContext()
   const [countryName, setCountryName] = useState('')
   const [errCountryName, setErrCountryName] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -15,7 +17,7 @@ const CountrySearch: React.FC<CountrySearchProps> = () => {
   useEffect(() => {
     let err
     if (countryName.length < 3) {
-      err ='Country name must contain more than 3 charactter'
+      err = 'Country name must contain more than 3 charactter'
       setErrCountryName(err)
       return
     }
@@ -23,7 +25,14 @@ const CountrySearch: React.FC<CountrySearchProps> = () => {
   }, [countryName])
 
   const handleAddCountryInList = async (country: ExchangeRateTypes.Country) => {
-
+    try {
+      await internaRequest.post('/exchange-rate/country', country)
+      onAdded(country)
+      setSearchedList([])
+      setCountryName('')
+    } catch (err) {
+      notificationCtx.logError(err)
+    }
   }
 
   const handleSearch = async () => {
@@ -33,11 +42,11 @@ const CountrySearch: React.FC<CountrySearchProps> = () => {
     try {
       const result = await internaRequest.get<ExchangeRateTypes.Country[]>(
         '/exchange-rate/country/search',
-        { params: { name: countryName}}
+        { params: { name: countryName } }
       )
       setSearchedList(result.data)
     } catch (err) {
-      alert('Failed to search country list')
+      notificationCtx.logError(err)
     }
   }
   return (
@@ -58,19 +67,10 @@ const CountrySearch: React.FC<CountrySearchProps> = () => {
         aria-controls="country-search"
       />
       <Button onClick={handleSearch}>Search</Button>
-      {/* {searchedList.length > 0 && (
-        <SearchOptionList
-        
-          list={searchedList.map(({ name, alpha3Code }) => ({
-            name,
-            value: alpha3Code,
-          }))}
-          onSelect={(item) => handleAddCountryInList(item.value)}
-        />
-      )} */}
       <Menu
         anchorEl={anchorEl}
         open={searchedList.length > 0}
+        onClose={() => setSearchedList([])}
       >
         {searchedList.map((country) => (
           <MenuItem
@@ -82,5 +82,5 @@ const CountrySearch: React.FC<CountrySearchProps> = () => {
 
   )
 }
- 
+
 export default CountrySearch

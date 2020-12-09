@@ -15,3 +15,4 @@ This is simple exchange late listing service
   - **This is only to distinguish user**
   - There is no sign up method
   - Email validation is simple. 
+- Limited error handling on client currently

@@ -3,7 +3,7 @@ import ExpectedError from './ExpectedError'
 import HTTP_STATUS from '../constants/httpStatus'
 import appConfig from '../configs/appConfig'
 
-const handleError = (req: Request, res: Response, error: ExpectedError | Error, defaultErrMsg?: string) => {
+const handleError = (req: Request<any>, res: Response, error: ExpectedError | Error, defaultErrMsg?: string) => {
   const devError: any = { errMessage: error.message }
   const errJSON: { [key:string]: any} = {
     message: error.message || defaultErrMsg || 'Client error',
@@ -27,7 +27,7 @@ const handleError = (req: Request, res: Response, error: ExpectedError | Error, 
     .json(errJSON)
 }
 
-const handleResponse = (req: Request, res: Response, data?: any, successMessage?: string): Response => {
+const handleResponse = (req: Request<any>, res: Response, data?: any, successMessage?: string): Response => {
   if (data || successMessage) {
     return res
       .status(HTTP_STATUS.OK)

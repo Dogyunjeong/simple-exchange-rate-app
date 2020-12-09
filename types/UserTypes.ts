@@ -2,9 +2,8 @@ namespace UserTypes {
   export interface UserCreate {
     email: string
   }
-  export interface User {
+  export interface User extends UserCreate {
     _id: string
-    email: string
   }
 }
 

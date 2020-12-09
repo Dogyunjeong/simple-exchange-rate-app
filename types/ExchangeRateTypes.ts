@@ -3,11 +3,12 @@ namespace ExchangeRateTypes {
     code: string
     name: string
     symbol: string
+    rateOverSEK?: number
   }
   export interface Country {
     name: string
     alpha3Code: string
-    currencies: Currency[]
+    currency: Currency
     population: number
   }
 }

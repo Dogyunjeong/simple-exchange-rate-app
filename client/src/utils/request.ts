@@ -5,6 +5,7 @@ import axios, {
   AxiosError,
 } from "axios"
 import apiConfig from "../configs/apiConfig"
+import ExpectedAPIError from './ExpectedAPIError'
 
 export interface RequestResponse<T = any> extends AxiosResponse<T> {
   message: string
@@ -35,7 +36,7 @@ class Request implements RequestInstance {
   constructor(baseURL: string) {
     this._instance = axios.create({
       baseURL,
-      timeout: 1000,
+      timeout: apiConfig.API_BASE_TIMEOUT,
       withCredentials: true,
     })
     this._instance.interceptors.response.use((response) => {
@@ -48,7 +49,14 @@ class Request implements RequestInstance {
   }
 
   private _handleErrorResponse = (error: AxiosError) => {
-    return Promise.reject(error)
+    if (!error.response?.data?.message) {
+      return Promise.reject(error);
+    }
+    const expectedError = new ExpectedAPIError(
+      error.response.data.message || error.message,
+      error.response.status,
+    );
+    return Promise.reject(expectedError);
   }
   public get = <T>(url: string, config?: AxiosRequestConfig) =>
     this._instance.get(url, config) as Promise<RequestResponse<T>>

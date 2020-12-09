@@ -4,6 +4,8 @@ namespace API_ERRORS {
   }
   export namespace EXCHANGE_RATE {
     export const SEARCH_COUNTRY = 'Failed to search country'
+    export const LIST_COUNTRY = 'Failed to list Country'
+    export const ADD_COUNTRY = 'Failed to add Country'
   }
 }
 
