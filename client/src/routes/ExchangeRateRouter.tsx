@@ -8,8 +8,8 @@ export interface ExchangeRateRouterProps {}
 const ExchangeRateRouter: React.FC<ExchangeRateRouterProps> = () => {
   return (
     <Switch>
+      <Route path="/" exact component={Landing}/>
       <Route paht="/exchange-rate" exact component={CountryList} />
-      <Route path="/" component={Landing}/>
     </Switch>
   )
 }

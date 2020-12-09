@@ -66,7 +66,7 @@ const CountrySearch: React.FC<CountrySearchProps> = ({ onAdded }) => {
         }}
         aria-controls="country-search"
       />
-      <Button onClick={handleSearch}>Search</Button>
+      <Button variant="outlined" onClick={handleSearch}>Search</Button>
       <Menu
         anchorEl={anchorEl}
         open={searchedList.length > 0}

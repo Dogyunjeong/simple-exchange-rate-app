@@ -19,11 +19,11 @@ const CountryList: React.FC<CountryListProps> = () => {
         onAdded={handleCountryAdded}
       />
       <Divider />
-      <Grid container>
+      <Grid container direction="column">
+        <h4>Check how much value SEK has</h4>
         <Grid item>
           <TextField
             label="SEK"
-            type="number"
             placeholder="Type amount of SEK"
             InputProps={{
               endAdornment: <InputAdornment position="end">Kr</InputAdornment>

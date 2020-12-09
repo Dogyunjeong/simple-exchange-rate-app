@@ -1,17 +1,14 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import ExpectedAPIError from '../utils/ExpectedAPIError'
 import { Snackbar, Alert } from '../components/MaterialUI'
 
 
 type APIErrorStateType = Error | ExpectedAPIError | null
-type APISuccessStateType = {
-  message: string
-} | null
+
 interface IAppNotificationContext {
   logError: React.Dispatch<React.SetStateAction<APIErrorStateType>>
   logWarn: (message: string) => void
-  logSuccess: React.Dispatch<React.SetStateAction<APISuccessStateType>>
+  logSuccess: (message: string) => void
 }
 
 const AppNotificationContext = React.createContext<IAppNotificationContext>({
@@ -24,7 +21,7 @@ const NOTIFICATION_DURATION = 2000
 // The top level component that will wrap our app's core features
 const AppNotificationProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, logError] = useState<APIErrorStateType>(null)
-  const [success, logSuccess] = useState<APISuccessStateType>(null)
+  const [success, logSuccess] = useState<string | null>(null)
   const [warnMessage, logWarn] = useState<string | null>(null)
 
   React.useEffect(() => {
@@ -81,13 +78,13 @@ const AppNotificationProvider = ({ children }: { children: React.ReactNode }) =>
         </Alert>
       </Snackbar>
       <Snackbar
-        open={!!success?.message}
+        open={!!success}
         autoHideDuration={NOTIFICATION_DURATION}
         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
         onClose={() => logSuccess(null)}
       >
         <Alert elevation={6} variant="filled" severity="success">
-          {success?.message}
+          {success}
         </Alert>
       </Snackbar>
       {children}

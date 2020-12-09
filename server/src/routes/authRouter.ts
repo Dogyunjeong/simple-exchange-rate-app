@@ -8,6 +8,6 @@ const authRouter = express.Router()
 authRouter.post('/login', authController.login)
 
 authRouter.get('/logged-in/check', jwtAuthenticateMiddleware, authController.checkLogin)
-authRouter.get('/sign-out', jwtAuthenticateMiddleware, authController.signOut)
+authRouter.get('/logout', jwtAuthenticateMiddleware, authController.signOut)
 
 export default authRouter
