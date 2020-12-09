@@ -56,6 +56,7 @@ const CountrySearch: React.FC<CountrySearchProps> = ({ onAdded }) => {
         error={!!countryName && !!errCountryName}
         type="search"
         variant="outlined"
+        value={countryName}
         placeholder="Type country name to search"
         helperText={!!countryName && errCountryName}
         onChange={(e) => {

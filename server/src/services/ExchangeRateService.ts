@@ -1,31 +1,29 @@
-import externalApiConfig from "../configs/externalApiConfig"
-import httpRequestUtil from "../utils/HttpRequestUtil"
 import ExchangeRateTypes from "../types/ExchangeRateTypes"
 import UserCountryModel from "../models/UserCountryModel"
 import ExpectedError from "../utils/ExpectedError"
 import _ from "../utils/lodash"
 import BPromise from "../utils/BPromise"
 import CurrencyDriver from '../drivers/CurrencyDriver'
+import CountryDriver from '../drivers/CountryDriver'
 
 class ExchangeRateService {
-  private _request = httpRequestUtil
   private _userCountryModel: UserCountryModel
   private _currencyDriver: CurrencyDriver
+  private _countryDriver: CountryDriver
   constructor(
     {
       userCountryModel,
-      currencyDriver
+      currencyDriver,
+      countryDriver,
     }: {
       userCountryModel: UserCountryModel,
       currencyDriver: CurrencyDriver,
+      countryDriver: CountryDriver 
     },
-    { request }: { request?: any } = {}
   ) {
-    if (request) {
-      this._request = request
-    }
     this._userCountryModel = userCountryModel
     this._currencyDriver = currencyDriver
+    this._countryDriver = countryDriver
   }
 
   private _trimRawCountries = async (
@@ -56,27 +54,16 @@ class ExchangeRateService {
     if (!alpha3Codes || alpha3Codes.length === 0) {
       return []
     }
-    try {
-      const response = await this._request.get(
-        `${externalApiConfig.REST_COUNTRY_API.URL}/alpha?codes=${alpha3Codes.join(
-          ";"
-        )}`
-      )
-      return this._trimRawCountries(response.body, true)
-    } catch (err) {
-      console.error('Fiaeld to fetch country information', err)
-      throw new Error('Failed to fetch country informattiosn by alpha3Code')
-    }
+    const rawCountries = await this._countryDriver.listCountriesByAlpha3Codes(alpha3Codes)
+    return this._trimRawCountries(rawCountries, true)
   }
 
   public searchCountryByName = async (
     countryName: string
   ): Promise<ExchangeRateTypes.Country[]> => {
-    const response = await this._request.get(
-      `${externalApiConfig.REST_COUNTRY_API.URL}/name/${countryName}`
-    )
+    const rawCountries = await this._countryDriver.searchByName(countryName)
     const countries: ExchangeRateTypes.Country[] = await this._trimRawCountries(
-      response.body,
+      rawCountries,
       false
     )
     return countries
