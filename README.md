@@ -25,3 +25,5 @@ This is simple exchange late listing service
   - e.g Search input doesn't have realtime search functionality.
 - No Loading indicators
 - Simple validations
+- No paginations.
+- **When list is changed, Simply refetch entire list instead of adding an Item**
